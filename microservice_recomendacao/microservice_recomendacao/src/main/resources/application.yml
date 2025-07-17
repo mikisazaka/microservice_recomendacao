@@ -1,0 +1,15 @@
+server:
+  port: 8886
+spring:
+  application:
+    name: microservice_recomendacao
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:secret}
+book-service:
+  url: http://localhost:8887
+user-service:
+  url: http://localhost:8888
+interact-service:
+  url: http://localhost:8889
