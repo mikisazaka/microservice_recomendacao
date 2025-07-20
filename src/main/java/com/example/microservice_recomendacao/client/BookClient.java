@@ -17,7 +17,7 @@ public class BookClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("http://localhost:8887")
+    @Value("${book-service.url}")
     private String bookServiceUrl;
 
     public BookDTO getBookById(Long id) {

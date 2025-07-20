@@ -16,7 +16,7 @@ public class InteractionClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("http://localhost:8889")
+    @Value("${interact-service.url}")
     private String interactionServiceUrl;
 
     public List<LikeDTO> listarLikesPorUsuario(Long userId) {
