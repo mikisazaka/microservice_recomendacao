@@ -24,8 +24,7 @@ public class RecomendacaoService {
     }
 
     public List<BookDTO> listarRecomendacoes(Long userId) {
-        String token = authUtil.getAuthorizationToken();
-        List<LikeDTO> curtidas = interactionClient.listarLikesPorUsuario(userId, token);
+        List<LikeDTO> curtidas = interactionClient.listarLikesPorUsuario(userId);
         List<BookDTO> livrosCurtidos = new ArrayList<>();
         Set<Long> livrosCurtidosIds = curtidas.stream()
                 .map(LikeDTO::bookId)

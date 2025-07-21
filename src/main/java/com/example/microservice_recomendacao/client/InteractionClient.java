@@ -8,6 +8,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,8 +23,11 @@ public class InteractionClient {
     @Value("${interact-service.url}")
     private String interactionServiceUrl;
 
-    public List<LikeDTO> listarLikesPorUsuario(Long userId, String token) {
+    public List<LikeDTO> listarLikesPorUsuario(Long userId) {
         String url = interactionServiceUrl + "/like/" + userId;
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String token = (String) auth.getCredentials();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + token);
@@ -34,8 +39,11 @@ public class InteractionClient {
         return response.getBody();
     }
 
-    public Boolean likeExiste(Long userId, Long bookId, String token) {
+    public Boolean likeExiste(Long userId, Long bookId) {
         String url = interactionServiceUrl + "/like/existe/" + userId + "/" + bookId;
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String token = (String) auth.getCredentials();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + token);

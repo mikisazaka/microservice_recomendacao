@@ -34,7 +34,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
                 var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
 
-                var authentication = new UsernamePasswordAuthenticationToken(userId, null, authorities);
+                var authentication = new UsernamePasswordAuthenticationToken(userId, token, authorities);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
