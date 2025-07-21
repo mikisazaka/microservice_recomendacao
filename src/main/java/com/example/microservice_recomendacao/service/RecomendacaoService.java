@@ -4,24 +4,32 @@ import com.example.microservice_recomendacao.client.BookClient;
 import com.example.microservice_recomendacao.client.InteractionClient;
 import com.example.microservice_recomendacao.dto.BookDTO;
 import com.example.microservice_recomendacao.dto.LikeDTO;
+import com.example.microservice_recomendacao.util.AuthUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RecomendacaoService {
 
     private final InteractionClient interactionClient;
     private final BookClient bookClient;
+    private final AuthUtil authUtil;
 
-    public RecomendacaoService(InteractionClient interactionClient, BookClient bookClient) {
+    public RecomendacaoService(InteractionClient interactionClient, BookClient bookClient, AuthUtil authUtil) {
         this.interactionClient = interactionClient;
         this.bookClient = bookClient;
+        this.authUtil = authUtil;
     }
 
     public List<BookDTO> listarRecomendacoes(Long userId) {
-        List<LikeDTO> curtidas = interactionClient.listarLikesPorUsuario(userId);
+        String token = authUtil.getAuthorizationToken();
+        List<LikeDTO> curtidas = interactionClient.listarLikesPorUsuario(userId, token);
         List<BookDTO> livrosCurtidos = new ArrayList<>();
+        Set<Long> livrosCurtidosIds = curtidas.stream()
+                .map(LikeDTO::bookId)
+                .collect(Collectors.toSet());
         for(LikeDTO l : curtidas) {
             BookDTO livro = bookClient.getBookById(l.bookId());
             livrosCurtidos.add(livro);
@@ -72,7 +80,7 @@ public class RecomendacaoService {
         int qtdTotal = 0;
         for(Map.Entry<String, Integer> map : mapGenero.entrySet()) {
             Integer qtdCurtidas = map.getValue();
-            double peso = (double) ((qtdCurtidas / totalLivrosCurtidos) * 10);
+            double peso = ((double) qtdCurtidas / totalLivrosCurtidos) * 10;
             int pesoIndividual = (int) Math.round(peso);
             qtdTotal += pesoIndividual;
             mapGenero.put(map.getKey(), pesoIndividual);
@@ -103,7 +111,7 @@ public class RecomendacaoService {
         for(Map.Entry<String, Integer> genero : mapGenero.entrySet()) {
             int qtd = genero.getValue();
             for(BookDTO livro : todosLivros) {
-                if(qtd > 0 && (livro.gender().equals(genero.getKey()) && !interactionClient.likeExiste(userId, livro.id()))) {
+                if(qtd > 0 && (livro.gender().equals(genero.getKey()) && !livrosCurtidosIds.contains(livro.id()))) {
                     livrosRecomendados.add(livro);
                     qtd--;
                 }
