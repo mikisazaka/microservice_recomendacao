@@ -4,7 +4,6 @@ import com.example.microservice_recomendacao.client.BookClient;
 import com.example.microservice_recomendacao.client.InteractionClient;
 import com.example.microservice_recomendacao.dto.BookDTO;
 import com.example.microservice_recomendacao.dto.LikeDTO;
-import com.example.microservice_recomendacao.util.AuthUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -15,12 +14,10 @@ public class RecomendacaoService {
 
     private final InteractionClient interactionClient;
     private final BookClient bookClient;
-    private final AuthUtil authUtil;
 
-    public RecomendacaoService(InteractionClient interactionClient, BookClient bookClient, AuthUtil authUtil) {
+    public RecomendacaoService(InteractionClient interactionClient, BookClient bookClient) {
         this.interactionClient = interactionClient;
         this.bookClient = bookClient;
-        this.authUtil = authUtil;
     }
 
     public List<BookDTO> listarRecomendacoes(Long userId) {
